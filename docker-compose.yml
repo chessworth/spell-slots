@@ -9,6 +9,8 @@ services:
       - ./backend:/app
       - /app/node_modules
     command: npm run dev
+    environment:
+    - CHOKIDAR_USEPOLLING=true
     depends_on:
       - frontend
 
@@ -26,3 +28,18 @@ services:
     command: npm run start
     environment:
     - CHOKIDAR_USEPOLLING=true
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: spelluser
+      POSTGRES_PASSWORD: spellpass
+      POSTGRES_DB: spelldb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/scripts/taskInit.sql:/docker-entrypoint-initdb.d/taskInit.sql
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:
